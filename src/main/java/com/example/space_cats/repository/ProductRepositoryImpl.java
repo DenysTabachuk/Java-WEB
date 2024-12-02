@@ -1,11 +1,13 @@
 package com.example.space_cats.repository;
 
+import com.example.space_cats.domain.Category;
 import com.example.space_cats.domain.Product;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class ProductRepositoryImpl implements ProductRepository{
@@ -13,7 +15,7 @@ public class ProductRepositoryImpl implements ProductRepository{
     private final List<Product> products = new ArrayList<>(makeMockData());
 
     @Override
-    public Optional<Product> getById(long id) {
+    public Optional<Product> getById(UUID id) {
         return products.stream()
                 .filter(product -> product.getId() == id)
                 .findFirst(); // Повертає Optional<Product>, якщо продукт знайдено, або Optional.empty() в іншому випадку.
@@ -26,8 +28,10 @@ public class ProductRepositoryImpl implements ProductRepository{
     }
 
     @Override
-    public void delete(long id) {
+    public String delete(UUID id) {
         products.removeIf(product -> product.getId() == id);
+        return "Product( ID - " + id + " ) successfully deleted";
+
     }
 
     @Override
@@ -37,7 +41,7 @@ public class ProductRepositoryImpl implements ProductRepository{
     }
 
     @Override
-    public Optional<Product> updateProduct(long id, Product product) {
+    public Optional<Product> updateProduct(UUID id, Product product) {
         for (int i = 0; i < products.size(); i++) {
             if (products.get(i).getId() == id) {
                 products.set(i, product);
@@ -50,9 +54,25 @@ public class ProductRepositoryImpl implements ProductRepository{
 
 
     private List<Product> makeMockData(){
-        Product product1 = Product.builder()
+        Category weapons  = Category.builder()
                 .id(1)
-                .categoryId(1)
+                .name("Space Guns")
+                .build();
+
+        Category toys  = Category.builder()
+                .id(2)
+                .name("Space toys")
+                .build();
+
+        Category food  = Category.builder()
+                .id(3)
+                .name("Space food")
+                .build();
+
+
+        Product product1 = Product.builder()
+                .id(UUID.randomUUID())
+                .category(food)
                 .name("Space Cat Food")
                 .price(100.)
                 .description("Testy")
@@ -61,8 +81,8 @@ public class ProductRepositoryImpl implements ProductRepository{
                 .build();
 
         Product product2 = Product.builder()
-                .id(2)
-                .categoryId(2)
+                .id(UUID.randomUUID())
+                .category(toys)
                 .name("Space cat toy")
                 .price(999.99)
                 .description("Very soft. Meow")
@@ -71,8 +91,8 @@ public class ProductRepositoryImpl implements ProductRepository{
                 .build();
 
         Product product3 = Product.builder()
-                .id(3)
-                .categoryId(3)
+                .id(UUID.randomUUID())
+                .category(weapons)
                 .name("Space Blaster")
                 .price(8999.99)
                 .description("Piy Piy. Deadly thing")

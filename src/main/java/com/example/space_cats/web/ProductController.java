@@ -15,6 +15,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Validated
 @RestController
@@ -31,9 +32,12 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDTO> getProduct(@PathVariable long id) {
+    public ResponseEntity<ProductDTO> getProduct(@PathVariable UUID id) {
+        System.out.println("В гет контролері " + id.toString());
         Product product =  productService.getById(id);
         ProductDTO productDTO = productMapper.toDto(product);
+
+
         return ResponseEntity.ok(productDTO);
 
     }
@@ -52,13 +56,18 @@ public class ProductController {
         ProductDTO newProductDTO = productMapper.toDto(product);
         return new ResponseEntity<>(newProductDTO, HttpStatus.CREATED);
     }
-    
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDTO> updateProduct(@RequestBody @Valid ProductDTO productDTO, @PathVariable UUID id) {
+        Product product = productService.updateProduct(id, productMapper.toEntity(productDTO) );
+        ProductDTO newProductDTO = productMapper.toDto(product);
+        return ResponseEntity.ok(newProductDTO);
+    }
 
 
     @DeleteMapping("{id}")
-    public ResponseEntity<ProductDTO> deleteProduct(@PathVariable long id){
-        productService.deleteById(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteProduct(@PathVariable UUID id){
+        return ResponseEntity.ok(productService.deleteById(id));
     }
 
 

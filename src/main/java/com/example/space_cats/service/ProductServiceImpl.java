@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import java.util.Optional;
+import java.util.UUID;
 
 
 @Service
@@ -21,12 +22,12 @@ public class ProductServiceImpl implements ProductService {
     }
     @Override
     public List<Product> getAll() {
+        System.out.println("PS" + productRepository.getAll());
         return productRepository.getAll();
     }
 
-    public Product getById(long id) {
-        Optional <Product> product = productRepository.getById(id);
-        return product.orElseThrow(() -> new ProductNotFoundException(id));
+    public Product getById(UUID id) {
+        return productRepository.getById(id).orElseThrow(() -> new ProductNotFoundException(id));
     }
 
 
@@ -36,16 +37,16 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Product updateProduct(long id, Product product) {
+    public Product updateProduct(UUID id, Product product) {
         Optional<Product> updatedProduct = productRepository.updateProduct(id, product);
         return updatedProduct.orElseThrow(() -> new ProductNotFoundException(id));
     }
 
 
     @Override
-    public void deleteById(long id) {
+    public String deleteById(UUID id) {
         Optional <Product> product = productRepository.getById(id);
         product.orElseThrow( ()-> new ProductNotFoundException(id) );
-        productRepository.delete(id);
+        return( productRepository.delete(id) );
     }
 }
