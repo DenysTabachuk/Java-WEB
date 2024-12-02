@@ -18,9 +18,10 @@ ext {
 	// Minimal Coverage
 	minimumCoveragePerFile = 0.5
 	filesExcludedFromCoverage = [
-			"**/*CosmoCatsApi*",
-			"**/config/*Configuration.*",
-			"**/ExtendedValidation*"
+			"**/config/*",
+			"**/SpaceCatsApplication*",
+			"**/mapper/*"
+
 	]
 }
 

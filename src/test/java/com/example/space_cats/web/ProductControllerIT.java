@@ -22,7 +22,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ import java.util.UUID;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ProductControllerIt {
+public class ProductControllerIT {
 
     @MockBean
     private ProductServiceImpl productService; // Мокаємо сервіс
@@ -113,8 +112,7 @@ public class ProductControllerIt {
                 .andExpect(jsonPath("$[0].category.name").value(product.getCategory().getName()))
                 .andExpect(jsonPath("$[0].name").value(product.getName()))
                 .andExpect(jsonPath("$[0].price").value(product.getPrice()))
-                .andExpect(jsonPath("$[0].description").value(product.getDescription()))
-                .andDo(print());
+                .andExpect(jsonPath("$[0].description").value(product.getDescription()));
     }
 
 
@@ -192,7 +190,6 @@ public class ProductControllerIt {
 
         mockMvc
                 .perform(delete("/api/v1/products/{id}", product.getId()))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().string("Product( ID - " + product.getId() + " ) successfully deleted"));
     }
@@ -203,7 +200,6 @@ public class ProductControllerIt {
         Mockito.when(productService.deleteById(randomId)).thenThrow(new ProductNotFoundException(randomId));
 
         mockMvc.perform(delete("/api/v1/products/{id}", randomId))
-                .andDo(print())
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.message").value("Product with id - " + randomId + " not found"));
     }

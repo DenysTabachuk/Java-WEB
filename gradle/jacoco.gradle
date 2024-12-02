@@ -23,6 +23,7 @@ jacocoTestCoverageVerification {
                 minimum = minimumCoveragePerFile
             }
         }
+
     }
 }
 

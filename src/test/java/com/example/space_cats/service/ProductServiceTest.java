@@ -142,11 +142,4 @@ public class ProductServiceTest {
         assertThrows(ProductNotFoundException.class,
                 () -> productService.getById(NOT_EXISTING_PRODUCT_ID));
     }
-
-
-
-
-
-
-
 }
