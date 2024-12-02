@@ -27,8 +27,6 @@ public class ProductDTO {
     @DecimalMin(value = "0.01", message = "Price must be greater than 0.01")
     private double price;
 
-
-
     @Size(max = 500, message = "Description must be less than or equal to 500 characters")
     private String description;
 }

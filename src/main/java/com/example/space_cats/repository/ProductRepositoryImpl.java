@@ -18,7 +18,7 @@ public class ProductRepositoryImpl implements ProductRepository{
     public Optional<Product> getById(UUID id) {
         return products.stream()
                 .filter(product -> product.getId() == id)
-                .findFirst(); // Повертає Optional<Product>, якщо продукт знайдено, або Optional.empty() в іншому випадку.
+                .findFirst();
     }
 
 

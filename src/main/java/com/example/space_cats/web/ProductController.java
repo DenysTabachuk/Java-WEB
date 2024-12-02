@@ -1,6 +1,5 @@
 package com.example.space_cats.web;
 
-
 import com.example.space_cats.domain.Product;
 import com.example.space_cats.dto.product.ProductDTO;
 import com.example.space_cats.service.ProductServiceImpl;
@@ -36,12 +35,9 @@ public class ProductController {
         System.out.println("В гет контролері " + id.toString());
         Product product =  productService.getById(id);
         ProductDTO productDTO = productMapper.toDto(product);
-
-
         return ResponseEntity.ok(productDTO);
 
     }
-
 
     @GetMapping
     public ResponseEntity<List<ProductDTO>> getAllProducts(){
@@ -52,8 +48,9 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductDTO> addProduct(@RequestBody @Valid  ProductDTO productDTO){
-        Product product = productService.createProduct(productMapper.toEntity(productDTO));
-        ProductDTO newProductDTO = productMapper.toDto(product);
+        Product product = productMapper.toEntity(productDTO);
+        Product createdProduct = productService.createProduct(product);
+        ProductDTO newProductDTO = productMapper.toDto(createdProduct);
         return new ResponseEntity<>(newProductDTO, HttpStatus.CREATED);
     }
 
@@ -64,12 +61,10 @@ public class ProductController {
         return ResponseEntity.ok(newProductDTO);
     }
 
-
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable UUID id){
         return ResponseEntity.ok(productService.deleteById(id));
     }
-
 
     @Data
     @AllArgsConstructor
