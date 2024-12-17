@@ -12,21 +12,19 @@ import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
 
-        String responseErrorText = "";
-
+        StringBuilder errorText = new StringBuilder();
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
-            responseErrorText += "Field: " + error.getField() + ". ";
-            responseErrorText += "Error: " + error.getDefaultMessage() +". ";
+            errorText.append("Field: ").append(error.getField()).append(". ")
+                    .append("Error: ").append(error.getDefaultMessage()).append(". ");
         }
 
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 "Bad request. Object field validation Error",
-                responseErrorText,
+                errorText.toString(),
                 request.getDescription(false).replace("uri=", "")
         );
 
@@ -35,8 +33,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleProductNotFoundException(ProductNotFoundException ex, WebRequest request) {
-
-
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.NOT_FOUND.value(),
                 "Product not found",
@@ -46,6 +42,4 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
     }
-
-
 }

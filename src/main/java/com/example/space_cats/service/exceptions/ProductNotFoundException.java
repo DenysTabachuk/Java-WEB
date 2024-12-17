@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public class ProductNotFoundException extends RuntimeException{
     public ProductNotFoundException(UUID id){
-        super("Product with id - " + id + " not found");
+        super(String.format("Product with id - %s not found", id));
     }
-
 }

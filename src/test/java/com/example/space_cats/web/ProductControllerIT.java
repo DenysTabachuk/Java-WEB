@@ -13,17 +13,14 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -32,16 +29,12 @@ import java.util.UUID;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ProductControllerIT {
-
     @MockBean
-    private ProductServiceImpl productService; // Мокаємо сервіс
-
+    private ProductServiceImpl productService;
     @Autowired
     private MockMvc mockMvc;
-
     @Autowired
     ProductMapper productMapper;
-
     @Autowired
     ObjectMapper objectMapper;
 
@@ -50,8 +43,8 @@ public class ProductControllerIT {
     private Product notValidProduct;
 
     @BeforeEach
-    void initVariables(){
-        category  = Category.builder()
+    void initVariables() {
+        category = Category.builder()
                 .id(1)
                 .name("new category")
                 .build();
@@ -75,11 +68,10 @@ public class ProductControllerIT {
                 .quantity(144)
                 .weight(1)
                 .build();
-
     }
 
-
-    @Test void shouldReturnProductById() throws Exception{
+    @Test
+    void shouldReturnProductById() throws Exception {
         Mockito.when(productService.getById(product.getId())).thenReturn(product);
 
         mockMvc.perform(get("/api/v1/products/{id}", product.getId()))
@@ -90,19 +82,20 @@ public class ProductControllerIT {
                 .andExpect(jsonPath("$.category.name").value(product.getCategory().getName()));
     }
 
-    @Test void shouldThrowProductNotFoundException() throws Exception{
+    @Test
+    void shouldThrowProductNotFoundException() throws Exception {
         UUID randomId = UUID.randomUUID();
 
         Mockito.when(productService.getById(randomId))
                 .thenThrow(new ProductNotFoundException(randomId));
 
-
         mockMvc.perform(get("/api/v1/products/{id}", randomId))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Product with id - " + randomId + " not found"));
+                .andExpect(jsonPath("$.message").value(String.format("Product with id - %s not found", randomId)));
     }
 
-    @Test void shouldReturnAllProducts() throws Exception{
+    @Test
+    void shouldReturnAllProducts() throws Exception {
         List<Product> productList = new ArrayList<>();
         productList.add(product);
         Mockito.when(productService.getAll()).thenReturn(productList);
@@ -115,9 +108,8 @@ public class ProductControllerIT {
                 .andExpect(jsonPath("$[0].description").value(product.getDescription()));
     }
 
-
     @Test
-    void shouldCreateProduct() throws Exception{
+    void shouldCreateProduct() throws Exception {
         ProductDTO productDTO = productMapper.toDto(product);
         Mockito.when(productService.createProduct(productMapper.toEntity(productDTO))).thenReturn(product);
 
@@ -133,9 +125,8 @@ public class ProductControllerIT {
     }
 
     @Test
-    void shouldNotCreateProductAndReturnBadRequest() throws Exception{
+    void shouldNotCreateProductAndReturnBadRequest() throws Exception {
         ProductDTO productDTO = productMapper.toDto(notValidProduct);
-        Mockito.when(productService.createProduct(productMapper.toEntity(productDTO))).thenReturn(product);
 
         String jsonProductDTO = objectMapper.writeValueAsString(productDTO);
         mockMvc.perform(post("/api/v1/products")
@@ -147,16 +138,16 @@ public class ProductControllerIT {
     }
 
     @Test
-    void shouldUpdateProduct() throws Exception{
+    void shouldUpdateProduct() throws Exception {
         String updatedName = "Updated space product name";
         Product updatedProduct = new Product(product);
         updatedProduct.setName(updatedName);
 
         ProductDTO productDTO = productMapper.toDto(updatedProduct);
-        Mockito.when(productService.updateProduct(product.getId(),productMapper.toEntity(productDTO))).thenReturn(updatedProduct);
+        Mockito.when(productService.updateProduct(product.getId(), productMapper.toEntity(productDTO))).thenReturn(updatedProduct);
 
         String jsonProductDTO = objectMapper.writeValueAsString(productDTO);
-        mockMvc.perform(put("/api/v1/products/{id}", product.getId() )
+        mockMvc.perform(put("/api/v1/products/{id}", product.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonProductDTO))
                 .andExpect(status().isOk())
@@ -167,16 +158,15 @@ public class ProductControllerIT {
     }
 
     @Test
-    void shouldNotUpdateProductAndReturnBadRequest() throws Exception{
+    void shouldNotUpdateProductAndReturnBadRequest() throws Exception {
         String updatedName = "Invalid product name";
         Product updatedProduct = new Product(product);
         updatedProduct.setName(updatedName);
 
         ProductDTO productDTO = productMapper.toDto(updatedProduct);
-        Mockito.when(productService.updateProduct(product.getId(),productMapper.toEntity(productDTO))).thenReturn(updatedProduct);
 
         String jsonProductDTO = objectMapper.writeValueAsString(productDTO);
-        mockMvc.perform(put("/api/v1/products/{id}", product.getId() )
+        mockMvc.perform(put("/api/v1/products/{id}", product.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonProductDTO))
                 .andExpect(status().isBadRequest())
@@ -185,25 +175,24 @@ public class ProductControllerIT {
     }
 
     @Test
-    void shouldDeleteProduct() throws Exception{
-        Mockito.when(productService.deleteById(product.getId())).thenReturn("Product( ID - " + product.getId() + " ) successfully deleted");
+    void shouldDeleteProduct() throws Exception {
+        Mockito.when(productService.deleteById(product.getId())).thenReturn(String.format("Product( ID - %s ) successfully deleted", product.getId()));
 
         mockMvc
                 .perform(delete("/api/v1/products/{id}", product.getId()))
                 .andExpect(status().isOk())
-                .andExpect(content().string("Product( ID - " + product.getId() + " ) successfully deleted"));
+                .andExpect(content().string(String.format("Product( ID - %s ) successfully deleted", product.getId())));
     }
 
     @Test
-    void shouldNotDeleteProductAndThrowProductNotFoundException() throws Exception{
+    void shouldNotDeleteProductAndThrowProductNotFoundException() throws Exception {
         UUID randomId = UUID.randomUUID();
         Mockito.when(productService.deleteById(randomId)).thenThrow(new ProductNotFoundException(randomId));
 
         mockMvc.perform(delete("/api/v1/products/{id}", randomId))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message").value("Product with id - " + randomId + " not found"));
+                .andExpect(jsonPath("$.message").value(String.format("Product with id - %s not found", randomId)));
     }
-
 }
 
 

@@ -3,7 +3,6 @@ package com.example.space_cats.repository;
 import com.example.space_cats.domain.Category;
 import com.example.space_cats.domain.Product;
 import org.springframework.stereotype.Repository;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +10,6 @@ import java.util.UUID;
 
 @Repository
 public class ProductRepositoryImpl implements ProductRepository{
-
     private final List<Product> products = new ArrayList<>(makeMockData());
 
     @Override
@@ -21,7 +19,6 @@ public class ProductRepositoryImpl implements ProductRepository{
                 .findFirst();
     }
 
-
     @Override
     public List<Product> getAll() {
         return products;
@@ -30,8 +27,7 @@ public class ProductRepositoryImpl implements ProductRepository{
     @Override
     public String delete(UUID id) {
         products.removeIf(product -> product.getId() == id);
-        return "Product( ID - " + id + " ) successfully deleted";
-
+        return String.format("Product( ID - %s ) successfully deleted", id);
     }
 
     @Override
@@ -51,8 +47,6 @@ public class ProductRepositoryImpl implements ProductRepository{
         return Optional.empty();
     }
 
-
-
     private List<Product> makeMockData(){
         Category weapons  = Category.builder()
                 .id(1)
@@ -68,7 +62,6 @@ public class ProductRepositoryImpl implements ProductRepository{
                 .id(3)
                 .name("Space food")
                 .build();
-
 
         Product product1 = Product.builder()
                 .id(UUID.randomUUID())
@@ -104,7 +97,6 @@ public class ProductRepositoryImpl implements ProductRepository{
         mockDataList.add(product1);
         mockDataList.add(product2);
         mockDataList.add(product3);
-
 
         return mockDataList;
     }

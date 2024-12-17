@@ -10,20 +10,16 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Stream;
-
 import org.junit.jupiter.params.provider.MethodSource;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @SpringBootTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class ProductServiceTest {
-
     @Autowired
     private ProductService productService;
 
@@ -67,7 +63,6 @@ public class ProductServiceTest {
                 .id(1)
                 .name("new category")
                 .build();
-
 
         Product newProduct = Product.builder()
                 .id(NOT_EXISTING_PRODUCT_ID)
@@ -115,7 +110,6 @@ public class ProductServiceTest {
                 .weight(1)
                 .build();
 
-
         productService.updateProduct(productToUpdate.getId(), product);
         Product updatedProduct = productService.getById(product.getId());
 
@@ -136,9 +130,7 @@ public class ProductServiceTest {
     void shouldDeleteProductSuccessfully() {
         // NOT_EXISTING_PRODUCT_ID currently exists due to previous tests
         String result = productService.deleteById(NOT_EXISTING_PRODUCT_ID);
-
-        assertEquals("Product( ID - " + NOT_EXISTING_PRODUCT_ID.toString() + " ) successfully deleted", result);
-
+        assertEquals(String.format("Product( ID - %s ) successfully deleted", NOT_EXISTING_PRODUCT_ID.toString()), result);
         assertThrows(ProductNotFoundException.class,
                 () -> productService.getById(NOT_EXISTING_PRODUCT_ID));
     }

@@ -6,14 +6,12 @@ import com.example.space_cats.service.exceptions.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
-
 import java.util.Optional;
 import java.util.UUID;
 
 
 @Service
 public class ProductServiceImpl implements ProductService {
-
     private final ProductRepository productRepository;
 
     @Autowired
@@ -22,14 +20,12 @@ public class ProductServiceImpl implements ProductService {
     }
     @Override
     public List<Product> getAll() {
-        System.out.println("PS" + productRepository.getAll());
         return productRepository.getAll();
     }
 
     public Product getById(UUID id) {
         return productRepository.getById(id).orElseThrow(() -> new ProductNotFoundException(id));
     }
-
 
     @Override
     public Product createProduct(Product product) {
@@ -41,7 +37,6 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> updatedProduct = productRepository.updateProduct(id, product);
         return updatedProduct.orElseThrow(() -> new ProductNotFoundException(id));
     }
-
 
     @Override
     public String deleteById(UUID id) {
