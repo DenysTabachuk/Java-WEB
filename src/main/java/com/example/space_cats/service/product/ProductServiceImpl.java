@@ -1,7 +1,7 @@
-package com.example.space_cats.service;
+package com.example.space_cats.service.product;
 
 import com.example.space_cats.domain.Product;
-import com.example.space_cats.repository.ProductRepository;
+import com.example.space_cats.repository.product.ProductRepository;
 import com.example.space_cats.service.exceptions.ProductNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

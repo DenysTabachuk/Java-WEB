@@ -1,4 +1,4 @@
-package com.example.space_cats.repository;
+package com.example.space_cats.repository.product;
 
 import com.example.space_cats.domain.Product;
 import java.util.List;

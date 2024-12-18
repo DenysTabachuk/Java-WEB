@@ -161,6 +161,29 @@
           }
         }
       }
+    },
+    "/api/v1/space-cats": {
+      "get": {
+        "tags": [
+          "space-cat-controller"
+        ],
+        "operationId": "getAllSpaceCats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SpaceCatDTO"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -204,6 +227,34 @@
           },
           "description": {
             "maxLength": 500,
+            "minLength": 0,
+            "type": "string"
+          }
+        }
+      },
+      "SpaceCatDTO": {
+        "required": [
+          "email",
+          "name"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "maxLength": 100,
+            "minLength": 3,
+            "type": "string"
+          },
+          "phoneNumber": {
+            "pattern": "^\\+?[0-9\\-\\s]{9,12}$",
+            "type": "string"
+          },
+          "address": {
+            "maxLength": 200,
+            "minLength": 10,
+            "type": "string"
+          },
+          "email": {
+            "maxLength": 100,
             "minLength": 0,
             "type": "string"
           }

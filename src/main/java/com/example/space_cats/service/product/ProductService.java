@@ -1,4 +1,4 @@
-package com.example.space_cats.service;
+package com.example.space_cats.service.product;
 
 import com.example.space_cats.domain.Product;
 import java.util.List;

@@ -11,3 +11,6 @@ public  class ErrorResponse {
     private String message;
     private String path;
 }
+
+
+//  I tried to use problemDetails but for some reason @ExceptionHandler stops catching the error
