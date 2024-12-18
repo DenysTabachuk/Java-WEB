@@ -2,10 +2,12 @@ package com.example.space_cats.web;
 
 import com.example.space_cats.domain.Category;
 import com.example.space_cats.domain.Product;
-import com.example.space_cats.dto.product.ProductDTO;
-import com.example.space_cats.service.ProductServiceImpl;
+import com.example.space_cats.dto.ProductDTO;
+import com.example.space_cats.featureToggle.FeatureToggleService;
+import com.example.space_cats.featureToggle.ToggleableFeature;
+import com.example.space_cats.service.product.ProductServiceImpl;
 import com.example.space_cats.service.exceptions.ProductNotFoundException;
-import com.example.space_cats.web.mapper.ProductMapper;
+import com.example.space_cats.web.mappers.ProductMapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static com.example.space_cats.featureToggle.ToggleableFeature.KITTY_PRODUCTS_FEATURE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -31,6 +35,8 @@ import java.util.UUID;
 public class ProductControllerIT {
     @MockBean
     private ProductServiceImpl productService;
+    @MockBean
+    private FeatureToggleService featureToggleService;
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -71,8 +77,20 @@ public class ProductControllerIT {
     }
 
     @Test
+    void shouldReturnBadRequestIfFeatureIsNotEnabled() throws Exception{
+        Mockito.when(featureToggleService.isEnabled(KITTY_PRODUCTS_FEATURE.getName())).thenReturn(false);
+        mockMvc.perform(get("/api/v1/products"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.message").value(String.format("Feature %s is NOT enabled", KITTY_PRODUCTS_FEATURE.getName())))
+                .andExpect(jsonPath("$.error").value("The requested feature is currently disabled"))
+                .andExpect(jsonPath("$.path").value("/api/v1/products"));
+    }
+
+    @Test
     void shouldReturnProductById() throws Exception {
         Mockito.when(productService.getById(product.getId())).thenReturn(product);
+        Mockito.when(featureToggleService.isEnabled(KITTY_PRODUCTS_FEATURE.getName())).thenReturn(true);
 
         mockMvc.perform(get("/api/v1/products/{id}", product.getId()))
                 .andExpect(status().isOk())
@@ -85,7 +103,7 @@ public class ProductControllerIT {
     @Test
     void shouldThrowProductNotFoundException() throws Exception {
         UUID randomId = UUID.randomUUID();
-
+        Mockito.when(featureToggleService.isEnabled(KITTY_PRODUCTS_FEATURE.getName())).thenReturn(true);
         Mockito.when(productService.getById(randomId))
                 .thenThrow(new ProductNotFoundException(randomId));
 
@@ -95,10 +113,11 @@ public class ProductControllerIT {
     }
 
     @Test
-    void shouldReturnAllProducts() throws Exception {
+    void shouldReturnAllProductsIfFeatureIsEnabled() throws Exception {
         List<Product> productList = new ArrayList<>();
         productList.add(product);
         Mockito.when(productService.getAll()).thenReturn(productList);
+        Mockito.when(featureToggleService.isEnabled(KITTY_PRODUCTS_FEATURE.getName())).thenReturn(true);
 
         mockMvc.perform(get("/api/v1/products"))
                 .andExpect(status().isOk())
@@ -112,6 +131,7 @@ public class ProductControllerIT {
     void shouldCreateProduct() throws Exception {
         ProductDTO productDTO = productMapper.toDto(product);
         Mockito.when(productService.createProduct(productMapper.toEntity(productDTO))).thenReturn(product);
+        Mockito.when(featureToggleService.isEnabled(KITTY_PRODUCTS_FEATURE.getName())).thenReturn(true);
 
         String jsonProductDTO = objectMapper.writeValueAsString(productDTO);
         mockMvc.perform(post("/api/v1/products")
@@ -126,6 +146,8 @@ public class ProductControllerIT {
 
     @Test
     void shouldNotCreateProductAndReturnBadRequest() throws Exception {
+        Mockito.when(featureToggleService.isEnabled(KITTY_PRODUCTS_FEATURE.getName())).thenReturn(true);
+
         ProductDTO productDTO = productMapper.toDto(notValidProduct);
 
         String jsonProductDTO = objectMapper.writeValueAsString(productDTO);
@@ -139,6 +161,8 @@ public class ProductControllerIT {
 
     @Test
     void shouldUpdateProduct() throws Exception {
+        Mockito.when(featureToggleService.isEnabled(KITTY_PRODUCTS_FEATURE.getName())).thenReturn(true);
+
         String updatedName = "Updated space product name";
         Product updatedProduct = new Product(product);
         updatedProduct.setName(updatedName);
@@ -159,6 +183,8 @@ public class ProductControllerIT {
 
     @Test
     void shouldNotUpdateProductAndReturnBadRequest() throws Exception {
+        Mockito.when(featureToggleService.isEnabled(KITTY_PRODUCTS_FEATURE.getName())).thenReturn(true);
+
         String updatedName = "Invalid product name";
         Product updatedProduct = new Product(product);
         updatedProduct.setName(updatedName);
@@ -176,6 +202,7 @@ public class ProductControllerIT {
 
     @Test
     void shouldDeleteProduct() throws Exception {
+        Mockito.when(featureToggleService.isEnabled(KITTY_PRODUCTS_FEATURE.getName())).thenReturn(true);
         Mockito.when(productService.deleteById(product.getId())).thenReturn(String.format("Product( ID - %s ) successfully deleted", product.getId()));
 
         mockMvc
@@ -187,6 +214,7 @@ public class ProductControllerIT {
     @Test
     void shouldNotDeleteProductAndThrowProductNotFoundException() throws Exception {
         UUID randomId = UUID.randomUUID();
+        Mockito.when(featureToggleService.isEnabled(KITTY_PRODUCTS_FEATURE.getName())).thenReturn(true);
         Mockito.when(productService.deleteById(randomId)).thenThrow(new ProductNotFoundException(randomId));
 
         mockMvc.perform(delete("/api/v1/products/{id}", randomId))

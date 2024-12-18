@@ -1,5 +1,6 @@
 package com.example.space_cats.web.exceptionHandling;
 
+import com.example.space_cats.featureToggle.exceptions.FeatureNotEnableException;
 import com.example.space_cats.service.exceptions.ProductNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,17 @@ import org.springframework.web.context.request.WebRequest;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+    @ExceptionHandler(FeatureNotEnableException.class)
+    public ResponseEntity<ErrorResponse> handleFeatureNotEnableException(FeatureNotEnableException ex, WebRequest request){
+        ErrorResponse errorResponse = new ErrorResponse(
+                HttpStatus.BAD_REQUEST.value(),
+                "The requested feature is currently disabled",
+                ex.getMessage(),
+                request.getDescription(false).replace("uri=", "")
+        );
+
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, WebRequest request) {
 

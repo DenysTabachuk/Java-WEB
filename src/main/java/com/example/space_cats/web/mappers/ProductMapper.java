@@ -1,9 +1,8 @@
-package com.example.space_cats.web.mapper;
+package com.example.space_cats.web.mappers;
 
 import com.example.space_cats.domain.Product;
-import com.example.space_cats.dto.product.ProductDTO;
+import com.example.space_cats.dto.ProductDTO;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;

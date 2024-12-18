@@ -1,4 +1,4 @@
-package com.example.space_cats.dto.product;
+package com.example.space_cats.dto;
 
 
 import com.example.space_cats.domain.Category;

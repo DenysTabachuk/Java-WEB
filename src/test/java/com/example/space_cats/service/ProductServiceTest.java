@@ -3,6 +3,7 @@ package com.example.space_cats.service;
 import com.example.space_cats.domain.Category;
 import com.example.space_cats.domain.Product;
 import com.example.space_cats.service.exceptions.ProductNotFoundException;
+import com.example.space_cats.service.product.ProductService;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
