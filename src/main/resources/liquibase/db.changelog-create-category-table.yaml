@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-category-table
+      author: DenysTabachuk
+      changes:
+
+        - createSequence:
+            sequenceName: space_cat_id_seq
+            incrementBy: 50
+
+
+        - createTable:
+            tableName: category
+            columns:
+              - column:
+                  name: id
+                  type: INT
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(200)
+        - addUniqueConstraint:
+            tableName: category
+            columnNames: name
+            constraintName: unique_category_name

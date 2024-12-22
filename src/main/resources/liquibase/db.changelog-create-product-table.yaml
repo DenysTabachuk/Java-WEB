@@ -1,0 +1,47 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-product-table
+      author: DenysTabachuk
+      changes:
+
+        - createTable:
+            tableName: product
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: category_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: DOUBLE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+              - column:
+                  name: quantity
+                  type: INT
+              - column:
+                  name: weight
+                  type: DOUBLE
+
+        # Add foreign key for category_id
+#        - addForeignKeyConstraint:
+#            baseTableName: product
+#            baseColumnNames: category_id
+#            referencedTableName: category
+#            referencedColumnNames: id
+#            constraintName: fk_product_category
