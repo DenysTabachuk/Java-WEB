@@ -86,7 +86,7 @@ public class ProductServiceImpl implements ProductService {
         Optional <ProductEntity> product = productRepository.findById(id);
         product.orElseThrow( ()-> new ProductNotFoundException(id) );
         productRepository.deleteById(id);
-        return( String.format("Product with ID %s deleted successfully.", id)) ;
+        return( String.format("Product with ID - %s deleted successfully.", id)) ;
     }
 
     private CategoryEntity findOrCreateCategory(CategoryDTO categoryDTO) {
