@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - include:
+      file: liquibase/db.changelog-create-category-table.yaml
+  - include:
+      file: liquibase/db.changelog-create-product-table.yaml
+  - include:
+      file: liquibase/db.changelog-create-space-order-table.yaml
+  - include:
+      file: liquibase/db.changelog-create-space-cat-table.yaml
+  - include:
+      file: liquibase/db.changelog-create-order-item-table.yaml
+  - include:
+      file: liquibase/db.add-constraints-and-indexes.yaml
+

@@ -1,22 +1,23 @@
 package com.example.space_cats.dto;
 
 
-import com.example.space_cats.domain.Category;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import lombok.Builder;
+import lombok.Data;
 import lombok.Value;
 
 import com.example.space_cats.validation.CosmicWordCheck;
 
 @Value
+@Data
 @Builder
 public class ProductDTO {
 
     @NotNull(message = "category can`t be null")
-    private Category category;
+    private CategoryDTO category;
 
     @CosmicWordCheck
     @NotNull(message = "name can`t be null")

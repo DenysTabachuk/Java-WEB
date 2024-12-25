@@ -5,13 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 public class Order {
-    private Long id;
-    private List<Product> products;
+    private UUID id;
+    private UUID spaceCatId;
+    private List<OrderItem> products;
     private Double price;
     private String additionalInfo;
 }

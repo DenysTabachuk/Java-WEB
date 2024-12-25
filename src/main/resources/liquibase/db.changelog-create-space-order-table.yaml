@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-space-order-table
+      author: DenysTabachuk
+      changes:
+
+        - createTable:
+            tableName: "space_order"
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: space_cat_id
+                  type: UUID
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(500)
+              - column:
+                  name: total_price
+                  type: DECIMAL(10,2)

@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-space-cat-table
+      author: DenysTabachuk
+      changes:
+
+        - createTable:
+            tableName: space_cat
+            columns:
+              - column:
+                  name: id
+                  type: UUID
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone_number
+                  type: VARCHAR(20)
+              - column:
+                  name: email
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: VARCHAR(255)
+              - column:
+                  name: birth_date
+                  type: DATE
+
+
+        - addUniqueConstraint:
+            tableName: space_cat
+            columnNames: email
+            constraintName: uq_space_cat_email
+
+        - addUniqueConstraint:
+            tableName: space_cat
+            columnNames: phone_number
+            constraintName: uq_space_cat_phone_number
