@@ -37,11 +37,3 @@ databaseChangeLog:
               - column:
                   name: weight
                   type: DOUBLE
-
-        # Add foreign key for category_id
-#        - addForeignKeyConstraint:
-#            baseTableName: product
-#            baseColumnNames: category_id
-#            referencedTableName: category
-#            referencedColumnNames: id
-#            constraintName: fk_product_category
