@@ -118,7 +118,6 @@ public class ProductControllerIT {
                 .andExpect(jsonPath("$.name").value(createdProduct.getName()))
                 .andExpect(jsonPath("$.description").value(createdProduct.getDescription()))
                 .andExpect(jsonPath("$.price").value(createdProduct.getPrice()));
-//                .andExpect(jsonPath("$.category.name").value(createdProduct.getCategory())); // mapping doesnt work for category :(
     }
 
     @Test

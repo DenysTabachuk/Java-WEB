@@ -1,141 +1,163 @@
-//package com.example.space_cats.service;
-//
-//import com.example.space_cats.domain.Category;
-//import com.example.space_cats.domain.Product;
-//import com.example.space_cats.dto.ProductDTO;
-//import com.example.space_cats.service.exceptions.ProductNotFoundException;
-//import com.example.space_cats.service.product.ProductService;
-//import org.junit.jupiter.api.MethodOrderer;
-//import org.junit.jupiter.api.Order;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.TestMethodOrder;
-//import org.junit.jupiter.params.ParameterizedTest;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import java.util.List;
-//import java.util.UUID;
-//import java.util.stream.Stream;
-//import org.junit.jupiter.params.provider.MethodSource;
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//
-//@SpringBootTest
-//@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-//public class ProductServiceTest {
-//    @Autowired
-//    private ProductService productService;
-//
-////    @Autowired
-////    private ProductM
-//
-//    private static final UUID NOT_EXISTING_PRODUCT_ID = UUID.randomUUID();
-//    private static List<ProductDTO>  productsDTO;
-//    private static Integer expectedProductsSize = 3;
-//
-//    static Stream<ProductDTO> provideProductsFotTest(){
-//        return  productsDTO.stream();
-//    }
-//
-//    @Test
-//    @Order(1)
-//    void shouldGetAllProductsSuccessfully(){
-//        productsDTO = productService.getAll();
-//        assertNotNull(productsDTO);
-//        assertEquals(expectedProductsSize, productsDTO.size());
-//    }
-//
-////    @ParameterizedTest
-////    @MethodSource("provideProductsFotTest")
-////    @Order(2)
-////    void shouldGetProductByIdSuccessfully(ProductDTO expectedProduct){
-////        ProductDTO productDTO = productService.getById(expectedProduct.getId());
-////        assertEquals(expectedProduct, productDTO);
-////    }
-//
-//    @Test
-//    @Order(3)
-//    void shouldThrowExceptionWhenGettingNonExistingProductById(){
-//        assertThrows(ProductNotFoundException.class,
-//                () -> productService.getById(NOT_EXISTING_PRODUCT_ID));
-//    }
-//
-//    @Test
-//    @Order(4)
-//    void shouldCreateProductSuccessfully(){
-//        int initialCount = productService.getAll().size();
-//
-//        Category newCategory  = Category.builder()
-//                .id(1)
-//                .name("new category")
-//                .build();
-//
-//        Product newProduct = Product.builder()
-//                .id(NOT_EXISTING_PRODUCT_ID)
-//                .category(newCategory)
-//                .name("new space product")
-//                .description("dwarf star as a gift with purchase")
-//                .price(123.)
-//                .quantity(144)
-//                .weight(1)
-//                .build();
-//
-//        productService.createProduct(newProduct);
-//        Product createdProduct = productService.getById(newProduct.getId());
-//        assertNotNull(createdProduct);
-//
-//        assertEquals(createdProduct.getName(), newProduct.getName());
-//        assertEquals(createdProduct.getPrice(), newProduct.getPrice());
-//        assertEquals(createdProduct.getQuantity(), newProduct.getQuantity());
-//        assertEquals(createdProduct.getWeight(), newProduct.getWeight());
-//        assertEquals(createdProduct.getCategory(), newProduct.getCategory());
-//        assertEquals(createdProduct.getDescription(), newProduct.getDescription());
-//
-//        int updatedCount = productService.getAll().size();
-//        assertEquals(initialCount + 1, updatedCount);
-//    }
-//
-//    @Test
-//    @Order(5)
-//    void shouldUpdateProductSuccessfully(){
-//        Category newCategory  = Category.builder()
-//                .id(1)
-//                .name("new category")
-//                .build();
-//
-//        Product productToUpdate = productsDTO.get(0);
-//
-//        Product product = Product.builder()
-//                .id(productToUpdate.getId())
-//                .category(newCategory)
-//                .name("Updated space product")
-//                .description("extra cosmic")
-//                .price(123.)
-//                .quantity(144)
-//                .weight(1)
-//                .build();
-//
-//        productService.updateProduct(productToUpdate.getId(), product);
-//        Product updatedProduct = productService.getById(product.getId());
-//
-//        assertNotNull(updatedProduct);
-//
-//        assertAll("Updated product properties",
-//                () -> assertEquals(product.getName(), updatedProduct.getName()),
-//                () -> assertEquals(product.getPrice(), updatedProduct.getPrice()),
-//                () -> assertEquals(product.getQuantity(), updatedProduct.getQuantity()),
-//                () -> assertEquals(product.getWeight(), updatedProduct.getWeight()),
-//                () -> assertEquals(product.getCategory(), updatedProduct.getCategory()),
-//                () -> assertEquals(product.getDescription(), updatedProduct.getDescription())
-//        );
-//    }
-//
-//    @Test
-//    @Order(6)
-//    void shouldDeleteProductSuccessfully() {
-//        // NOT_EXISTING_PRODUCT_ID currently exists due to previous tests
-//        String result = productService.deleteById(NOT_EXISTING_PRODUCT_ID);
-//        assertEquals(String.format("Product( ID - %s ) successfully deleted", NOT_EXISTING_PRODUCT_ID.toString()), result);
-//        assertThrows(ProductNotFoundException.class,
-//                () -> productService.getById(NOT_EXISTING_PRODUCT_ID));
-//    }
-//}
+package com.example.space_cats.service;
+
+
+import com.example.space_cats.dto.ProductDTO;
+import com.example.space_cats.entity.CategoryEntity;
+import com.example.space_cats.entity.ProductEntity;
+import com.example.space_cats.repository.ProductRepository;
+import com.example.space_cats.service.exceptions.ProductNotFoundException;
+import com.example.space_cats.service.product.ProductService;
+import com.example.space_cats.web.mappers.ProductEntityDtoMapper;
+import org.junit.jupiter.api.*;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+
+@SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class ProductServiceTest {
+    @MockBean
+    private ProductRepository productRepository;
+    @Autowired
+    ProductEntityDtoMapper productEntityDtoMapper;
+    @Autowired
+    private ProductService productService;
+
+    private CategoryEntity categoryEntityTest;
+    private ProductEntity productEntityTest;
+
+    @BeforeEach
+    void setUp() {
+        categoryEntityTest =  CategoryEntity.builder()
+                .name("Test Category")
+                .description("I dont know what to say")
+                .build();
+
+        productEntityTest = ProductEntity.builder()
+                .id(UUID.randomUUID())
+                .name("space gun")
+                .description("piy piy")
+                .price(99.)
+                .category(categoryEntityTest)
+                .build();
+    }
+
+    @Test
+    void shouldGetAllProductsSuccessfully(){
+        Mockito.when(productRepository.findAll()).thenReturn(List.of(productEntityTest));
+
+        List<ProductDTO> productDTOList = productService.getAll();
+        ProductDTO productDTO = productDTOList.get(0);
+
+        assertEquals(productDTOList.size(), 1);
+
+        assertEquals(productDTO.getName(), "space gun");
+        assertEquals(productDTO.getPrice(), 99.);
+        assertEquals(productDTO.getDescription(), "piy piy");
+    }
+
+
+    @Test
+    void shouldGetProductByIdSuccessfully(){
+        UUID randomId = UUID.randomUUID();
+        Mockito.when(productRepository.findById(randomId)).thenReturn(Optional.of(productEntityTest));
+        ProductDTO productDTO = productService.getById(randomId);
+
+        assertNotNull(productDTO);
+        assertEquals(productDTO.getName(), "space gun");
+        assertEquals(productDTO.getPrice(), 99.);
+        assertEquals(productDTO.getDescription(), "piy piy");
+    }
+
+    @Test
+    void shouldThrowExceptionWhenGettingNonExistingProductById() {
+        UUID nonExistingProductId = UUID.randomUUID();
+        Mockito.when(productRepository.findById(nonExistingProductId)).thenReturn(Optional.empty());
+
+        assertThrows(ProductNotFoundException.class,
+                () -> productService.getById(nonExistingProductId),
+                "Expected ProductNotFoundException to be thrown");
+    }
+
+    @Test
+    void shouldCreateProductSuccessfully(){
+        Mockito.when(productRepository.save(Mockito.any(ProductEntity.class))).thenReturn(productEntityTest);
+
+        ProductDTO createdProduct = productService.createProduct(productEntityDtoMapper.toDto(productEntityTest));
+
+        assertNotNull(createdProduct);
+        assertEquals(createdProduct.getName(), productEntityTest.getName());
+        assertEquals(createdProduct.getPrice(), productEntityTest.getPrice());
+        assertEquals(createdProduct.getDescription(), productEntityTest.getDescription());
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTryingToUpdateNotExistingProduct(){
+        UUID notExistingId = UUID.randomUUID();
+        Mockito.when(productRepository.findById(notExistingId)).thenReturn(Optional.empty());
+
+        assertThrows(ProductNotFoundException.class,
+                () -> productService.updateProduct(notExistingId, productEntityDtoMapper.toDto(productEntityTest)));
+    }
+
+    @Test
+    void shouldUpdateProductSuccessfully() {
+        CategoryEntity updatedCategoryEntity =  CategoryEntity.builder()
+                .name("updated Category")
+                .description("I dont know what to say")
+                .build();
+
+        ProductEntity updatedProductEntity = ProductEntity.builder()
+                .id(productEntityTest.getId())
+                .name("changed name")
+                .description("new description")
+                .category(updatedCategoryEntity)
+                .price(200.0)
+                .build();
+
+        Mockito.when(productRepository.findById(productEntityTest.getId()))
+                .thenReturn(Optional.of(productEntityTest));
+
+        Mockito.when(productRepository.save(Mockito.any(ProductEntity.class)))
+                .thenReturn(updatedProductEntity);
+
+        ProductDTO updatedProductDTO = productService.updateProduct(
+                productEntityTest.getId(), productEntityDtoMapper.toDto(updatedProductEntity));
+
+        assertNotNull(updatedProductDTO);
+        assertEquals(updatedProductEntity.getName(), updatedProductDTO.getName());
+        assertEquals(updatedProductEntity.getDescription(), updatedProductDTO.getDescription());
+        assertEquals(updatedProductEntity.getPrice(), updatedProductDTO.getPrice());
+        assertEquals(updatedProductEntity.getCategory().getName(), updatedProductDTO.getCategory().getName());
+    }
+
+    @Test
+    void shouldDeleteProductSuccessfully() {
+        UUID randomId = UUID.randomUUID();
+        Mockito.when(productRepository.findById(randomId)).thenReturn(Optional.of(productEntityTest));
+        doNothing().when(productRepository).deleteById(randomId);
+
+        String result = productService.deleteById(randomId);
+
+        assertEquals(String.format("Product with ID - %s deleted successfully.", randomId), result);
+
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTryingToDeleteNotExistingProduct(){
+        UUID notExistingId = UUID.randomUUID();
+        Mockito.when(productRepository.findById(notExistingId)).thenReturn(Optional.empty());
+
+        assertThrows(ProductNotFoundException.class,
+        () -> productService.deleteById(notExistingId));
+    }
+}

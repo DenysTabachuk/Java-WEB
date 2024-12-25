@@ -46,7 +46,6 @@ public class ProductServiceImpl implements ProductService {
                 .orElseThrow(() -> new ProductNotFoundException(id));
 
         ProductDTO productDTO =  productEntityDtoMapper.toDto(product);
-        // mapping doesnt work for category :(
         return productDTO;
     }
 
