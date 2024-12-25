@@ -9,4 +9,6 @@ databaseChangeLog:
       file: liquibase/db.changelog-create-space-cat-table.yaml
   - include:
       file: liquibase/db.changelog-create-order-item-table.yaml
+  - include:
+      file: liquibase/db.add-constraints-and-indexes.yaml
 
