@@ -18,6 +18,7 @@ import java.util.UUID;
 
 
 @Service
+@Transactional
 public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductEntityDtoMapper productEntityDtoMapper;

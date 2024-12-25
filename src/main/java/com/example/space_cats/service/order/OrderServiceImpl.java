@@ -17,13 +17,13 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class OrderServiceImpl implements  OrderService{
     private final OrderRepository orderRepository;
     private final SpaceCatRepository spaceCatRepository;
@@ -40,12 +40,14 @@ public class OrderServiceImpl implements  OrderService{
     }
 
     @Override
+    @Transactional
     public List<OrderDTO> getAll() {
         List<OrderEntity> orderDTOList = orderRepository.findAll();
         return  orderEntityDtoMapper.toDTO(orderDTOList);
     }
 
     @Override
+    @Transactional
     public OrderDTO getById(UUID id) {
         Optional<OrderEntity> orderEntity = orderRepository.findById(id);
         if (orderEntity.isEmpty()){
@@ -54,8 +56,8 @@ public class OrderServiceImpl implements  OrderService{
         return orderEntityDtoMapper.toDTO(orderEntity.get());
     }
 
-    @Transactional
     @Override
+    @Transactional
     public OrderDTO createOrder(OrderDTO orderDTO){
         // check if spaceCat exists
         Optional<SpaceCatEntity> spaceCatEntityOptional = spaceCatRepository.findById(orderDTO.getSpaceCatId());

@@ -15,6 +15,7 @@ import java.util.UUID;
 
 
 @Service
+@Transactional
 public class SpaceCatServiceImpl implements SpaceCatService{
     private final SpaceCatRepository spaceCatRepository;
     private final SpaceCatEntityDtoMapper spaceCatEntityDtoMapper;
@@ -26,12 +27,14 @@ public class SpaceCatServiceImpl implements SpaceCatService{
     }
 
     @Override
+    @Transactional
     public List<SpaceCatDTO> getAll() {
         List<SpaceCatEntity> spaceCatEntities = spaceCatRepository.findAll();
         return spaceCatEntityDtoMapper.toDto(spaceCatEntities);
     }
 
     @Override
+    @Transactional
     public SpaceCatDTO getById(UUID id) {
         SpaceCatEntity spaceCat =  spaceCatRepository.findById(id)
                 .orElseThrow(() -> new SpaceCatNotFoundException(id));
@@ -49,6 +52,7 @@ public class SpaceCatServiceImpl implements SpaceCatService{
     }
 
     @Override
+    @Transactional
     public SpaceCatDTO updateSpaceCat(UUID id, SpaceCatDTO spaceCatDTO) {
         SpaceCatEntity spaceCatToUpdate = spaceCatEntityDtoMapper.toEntity(spaceCatDTO);
         spaceCatToUpdate.setId(id);
@@ -57,6 +61,7 @@ public class SpaceCatServiceImpl implements SpaceCatService{
     }
 
     @Override
+    @Transactional
     public String deleteById(UUID id) {
         Optional<SpaceCatEntity> product = spaceCatRepository.findById(id);
         product.orElseThrow( ()-> new SpaceCatNotFoundException(id) );
@@ -65,6 +70,7 @@ public class SpaceCatServiceImpl implements SpaceCatService{
     }
 
     @Override
+    @Transactional
     public SpaceCatDTO getByEmail(String email){
         Optional<SpaceCatEntity> product = spaceCatRepository.findByEmail(email);
         product.orElseThrow( ()-> new SpaceCatNotFoundException(email) );
